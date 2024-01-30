@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "node:path";
 import { convertTsxToJsx } from "./util";
 // The built directory structure
@@ -67,13 +67,29 @@ app.on("activate", () => {
 
 app.whenReady().then(createWindow);
 
-ipcMain.on("get-title", (e, t) => {
+ipcMain.on("get-title", async (e, t) => {
+  let path;
   try {
     const webContent = e.sender;
     const win = BrowserWindow.fromWebContents(webContent);
     win!.setTitle(t);
+    const options: any = {
+      title: "Select a Directory",
+      properties: ["openDirectory"],
+    };
+    const result = await dialog.showOpenDialog(win!, options);
+
+    if (!result.canceled && result.filePaths.length > 0) {
+      console.log("Selected Path:", result.filePaths[0]);
+      // Do something with the selected path
+      console.log(`result`, result);
+    }
+
+    path = result.filePaths[0];
   } catch (error) {}
   console.log(`__dirrname`, __dirname); //dirname is in dist not in process
+  console.log(`path=========================================`, path);
+  convertTsxToJsx(path.toString());
   convertTsxToJsx(
     "/home/mehransaghebifard/mehran/electron-vite-project/electron"
   );

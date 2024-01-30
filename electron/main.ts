@@ -1,6 +1,6 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "node:path";
-
+import { convertTsxToJsx } from "./util";
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -44,7 +44,7 @@ function createWindow() {
       Math.floor(Math.random() * 1000) + __dirname
     );
     console.log("sending data");
-  }, 1000);
+  }, 6000);
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -66,3 +66,15 @@ app.on("activate", () => {
 });
 
 app.whenReady().then(createWindow);
+
+ipcMain.on("get-title", (e, t) => {
+  try {
+    const webContent = e.sender;
+    const win = BrowserWindow.fromWebContents(webContent);
+    win!.setTitle(t);
+  } catch (error) {}
+  console.log(`__dirrname`, __dirname); //dirname is in dist not in process
+  convertTsxToJsx(
+    "/home/mehransaghebifard/mehran/electron-vite-project/electron"
+  );
+});

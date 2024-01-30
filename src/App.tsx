@@ -34,6 +34,14 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <button
+        className=""
+        onClick={() => {
+          window.API.setTitle("my new Title ");
+        }}
+      >
+        Click to change
+      </button>
     </>
   );
 }
